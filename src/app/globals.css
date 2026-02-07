@@ -153,6 +153,21 @@ html {
   }
 }
 
+@keyframes scroll-hint {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.animate-scroll-hint {
+  animation: scroll-hint 2s ease-in-out infinite;
+}
+
 .animate-entry {
   opacity: 0;
   animation: fade-in-up 0.8s ease-out forwards;
@@ -183,6 +198,14 @@ html {
     linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
+}
+
+.cyber-grid-glow {
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.25) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
 }
 
 /* Scroll reveal animations */

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Shield, Cpu, Wifi, Home, Printer, Bot, Wrench, Terminal, Lock, Eye, Bug, Fingerprint, Key, Radio, Zap, ChevronDown, ShoppingBag, Youtube, Instagram } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Github, Linkedin, Mail, ExternalLink, Shield, Cpu, Wifi, Home, Printer, Bot, Wrench, Terminal, Lock, Eye, Bug, Fingerprint, Key, Radio, Zap, ChevronDown, ShoppingBag, Youtube, Instagram, CircuitBoard, Code, Binary, Braces, Network, FileCode, Hash, Cog } from "lucide-react";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -34,6 +34,51 @@ const TikTokIcon = ({ className }: { className?: string }) => (
     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
   </svg>
 );
+
+function CyberGrid({ className }: { className?: string }) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [mouse, setMouse] = useState({ x: -1000, y: -1000 });
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    const el = gridRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setMouse({ x: -1000, y: -1000 });
+  }, []);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const parent = el.parentElement;
+    if (!parent) return;
+    parent.addEventListener("mousemove", handleMouseMove);
+    parent.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      parent.removeEventListener("mousemove", handleMouseMove);
+      parent.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [handleMouseMove, handleMouseLeave]);
+
+  return (
+    <div ref={gridRef} className={`absolute inset-0 ${className ?? ""}`}>
+      {/* Base grid */}
+      <div className="absolute inset-0 cyber-grid" />
+      {/* Glow layer */}
+      <div
+        className="absolute inset-0 cyber-grid-glow transition-opacity duration-300"
+        style={{
+          opacity: mouse.x > -500 ? 1 : 0,
+          maskImage: `radial-gradient(circle 250px at ${mouse.x}px ${mouse.y}px, black 0%, transparent 100%)`,
+          WebkitMaskImage: `radial-gradient(circle 250px at ${mouse.x}px ${mouse.y}px, black 0%, transparent 100%)`,
+        }}
+      />
+    </div>
+  );
+}
 
 const projects = [
   {
@@ -95,13 +140,29 @@ const skills = [
   { name: "Fabricación", icon: Printer, items: ["Impresión 3D", "Diseño CAD", "Soldadura", "Prototipado"] },
 ];
 
-const securityIcons = [
-  { icon: Lock, delay: "0s" },
-  { icon: Eye, delay: "0.5s" },
-  { icon: Bug, delay: "1s" },
-  { icon: Fingerprint, delay: "1.5s" },
-  { icon: Key, delay: "2s" },
-  { icon: Radio, delay: "2.5s" },
+const floatingIcons = [
+  // Ciberseguridad
+  { icon: Lock, delay: "0s", x: 8, y: 15 },
+  { icon: Eye, delay: "0.5s", x: 85, y: 20 },
+  { icon: Bug, delay: "1s", x: 75, y: 70 },
+  { icon: Fingerprint, delay: "1.5s", x: 12, y: 75 },
+  { icon: Key, delay: "2s", x: 90, y: 50 },
+  { icon: Shield, delay: "2.5s", x: 50, y: 85 },
+  // Electrónica
+  { icon: CircuitBoard, delay: "0.3s", x: 20, y: 45 },
+  { icon: Cpu, delay: "1.2s", x: 70, y: 35 },
+  { icon: Radio, delay: "1.8s", x: 35, y: 80 },
+  { icon: Zap, delay: "2.2s", x: 60, y: 15 },
+  // Programación
+  { icon: Code, delay: "0.7s", x: 40, y: 25 },
+  { icon: Binary, delay: "1.4s", x: 25, y: 60 },
+  { icon: Braces, delay: "2.1s", x: 80, y: 80 },
+  { icon: Terminal, delay: "0.9s", x: 55, y: 55 },
+  { icon: FileCode, delay: "1.7s", x: 15, y: 30 },
+  // Maker / Redes
+  { icon: Cog, delay: "0.4s", x: 65, y: 45 },
+  { icon: Network, delay: "1.6s", x: 45, y: 65 },
+  { icon: Hash, delay: "2.3s", x: 30, y: 10 },
 ];
 
 // Productos en venta - cada uno con link a MercadoLibre
@@ -152,7 +213,7 @@ export default function Portfolio() {
       {/* Hero Section */}
       <section className="relative flex min-h-screen flex-col items-center justify-center px-6 overflow-hidden">
         {/* Cyber grid background */}
-        <div className="absolute inset-0 cyber-grid opacity-50" />
+          <CyberGrid className="opacity-50" />
         
         {/* Animated gradient orbs */}
         <div className="absolute inset-0 -z-10 overflow-hidden animate-entry-fade delay-300">
@@ -160,22 +221,22 @@ export default function Portfolio() {
           <div className="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-cyan-500/20 blur-[100px] animate-pulse" style={{ animationDelay: "1s" }} />
         </div>
 
-        {/* Floating security icons */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {securityIcons.map((item, index) => (
-            <div
-              key={index}
-              className="absolute animate-float opacity-10"
-              style={{
-                left: `${15 + index * 15}%`,
-                top: `${20 + (index % 3) * 25}%`,
-                animationDelay: item.delay,
-                animationDuration: `${3 + index * 0.5}s`,
-              }}
-            >
-              <item.icon className="h-12 w-12 text-emerald-400" />
-            </div>
-          ))}
+          {/* Floating icons */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {floatingIcons.map((item, index) => (
+              <div
+                key={index}
+                className="absolute animate-float opacity-[0.07]"
+                style={{
+                  left: `${item.x}%`,
+                  top: `${item.y}%`,
+                  animationDelay: item.delay,
+                  animationDuration: `${3 + (index % 5) * 0.7}s`,
+                }}
+              >
+                <item.icon className="h-10 w-10 text-emerald-400" />
+              </div>
+            ))}
         </div>
         
         <div className="max-w-4xl text-center relative z-10">
@@ -190,24 +251,26 @@ export default function Portfolio() {
             </div>
 
             {/* Terminal-style badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm font-mono text-emerald-400 backdrop-blur-sm transition-all duration-300 hover:bg-emerald-500/20 hover:border-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-entry delay-200">
+            <div className="mb-4 relative z-10 inline-flex items-center gap-2 rounded-full border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 text-sm font-mono text-emerald-400 backdrop-blur-sm transition-all duration-300 hover:bg-emerald-500/20 hover:border-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-entry delay-200">
               <Terminal className="h-4 w-4 animate-pulse" />
               <span className="typing-effect">~/security_researcher</span>
               <span className="animate-pulse">_</span>
             </div>
             
             {/* Main title with glitch effect */}
-            <h1 className="mb-6 text-4xl tracking-tight sm:text-5xl lg:text-6xl leading-[1.6] animate-entry delay-300" style={{ fontFamily: "'Fipps', monospace" }}>
-                  <span className="relative inline-block py-2">
-                    <span style={{ color: "#e20303" }}>Z3RØ</span><span className="transition-colors duration-500 hover:text-white" style={{ color: "#858585" }}>NULL</span>
-                  </span>
-                </h1>
+            <div className="mb-4 overflow-hidden pb-6 animate-entry delay-300">
+                <h1 className="text-4xl tracking-tight sm:text-5xl lg:text-6xl" style={{ fontFamily: "'Fipps', monospace", lineHeight: '1.1' }}>
+                <span className="relative inline-block">
+                  <span style={{ color: "#e20303" }}>Z3RØ</span><span className="transition-colors duration-500 hover:text-white" style={{ color: "#858585" }}>NULL</span>
+                </span>
+              </h1>
+            </div>
           
           {/* Subtitle with icons */}
           <div className="mb-6 flex flex-wrap items-center justify-center gap-4 text-emerald-400/80 animate-entry delay-400">
             <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              <span className="font-mono text-sm">HARDWARE HACKER</span>
+              <Code className="h-5 w-5" />
+              <span className="font-mono text-sm">DEVELOPER</span>
             </div>
             <span className="hidden sm:inline text-emerald-500/50">|</span>
             <div className="flex items-center gap-2">
@@ -222,8 +285,7 @@ export default function Portfolio() {
           </div>
           
           <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed animate-entry delay-500">
-            Apasionado por la <span className="text-emerald-400 font-medium">ciberseguridad</span>, la <span className="text-cyan-400 font-medium">electrónica</span> y el <span className="text-emerald-400 font-medium">hardware hacking</span>. 
-            Creo proyectos con Arduino, Raspberry Pi, impresión 3D y Python.
+            Apasionado por la <span className="text-emerald-400 font-medium">programación</span>, la <span className="text-cyan-400 font-medium">electrónica</span> y la <span className="text-emerald-400 font-medium">ciberseguridad</span>.
           </p>
           
           <div className="flex flex-wrap items-center justify-center gap-4 animate-entry delay-600">
@@ -269,15 +331,15 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-24 animate-bounce animate-entry-fade delay-1000">
-          <ChevronDown className="h-6 w-6 text-emerald-500/50" />
-        </div>
+          {/* Scroll indicator */}
+          <div className="absolute bottom-24 animate-entry-fade delay-1000">
+            <ChevronDown className="h-6 w-6 text-emerald-500/50 animate-scroll-hint" />
+          </div>
       </section>
 
         {/* Skills Section */}
-        <section className="relative border-t border-emerald-500/10 bg-[#0d0d0d] py-24">
-          <div className="absolute inset-0 cyber-grid opacity-30" />
+          <section className="relative border-t border-emerald-500/10 bg-[#0d0d0d] py-24">
+            <CyberGrid className="opacity-30" />
           
           <div className="relative mx-auto max-w-6xl px-6">
             <div className="scroll-reveal mb-4 flex items-center justify-center gap-3">
@@ -329,8 +391,8 @@ export default function Portfolio() {
       </section>
 
       {/* Projects Section */}
-        <section id="proyectos" className="relative py-24">
-          <div className="absolute inset-0 cyber-grid opacity-20" />
+          <section id="proyectos" className="relative py-24">
+            <CyberGrid className="opacity-20" />
           
           <div className="relative mx-auto max-w-6xl px-6">
             <div className="scroll-reveal mb-4 flex items-center justify-center gap-3">
@@ -416,8 +478,8 @@ export default function Portfolio() {
       </section>
 
       {/* Shop Section */}
-        <section id="shop" className="relative border-t border-amber-500/10 bg-[#0d0d0d] py-24">
-          <div className="absolute inset-0 cyber-grid opacity-30" />
+          <section id="shop" className="relative border-t border-amber-500/10 bg-[#0d0d0d] py-24">
+            <CyberGrid className="opacity-30" />
           
           <div className="relative mx-auto max-w-6xl px-6">
             <div className="scroll-reveal mb-4 flex items-center justify-center gap-3">
@@ -494,8 +556,8 @@ export default function Portfolio() {
       </section>
 
       {/* Contact Section */}
-      <section id="contacto" className="relative border-t border-emerald-500/10 py-24">
-        <div className="absolute inset-0 cyber-grid opacity-30" />
+        <section id="contacto" className="relative border-t border-emerald-500/10 py-24">
+          <CyberGrid className="opacity-30" />
         
           <div className="relative mx-auto max-w-3xl px-6 text-center">
             <div className="scroll-reveal mb-4 flex items-center justify-center gap-3">
